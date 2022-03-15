@@ -42,7 +42,7 @@ const roleAdd = [
         message: `What is the name of the role?`
     },
     {
-        name: 'lastName',
+        name: 'salary',
         type: 'input',
         message: `What is the salary of the role?`
     },

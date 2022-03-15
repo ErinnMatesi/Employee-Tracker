@@ -27,17 +27,24 @@ db.connect((err) => {
 }
 );
 
+const listRoles = () => {
+  db.query('SELECT * FROM roles', (err, res) => {
+    if (err) throw err;
+    res.json(//what should this output? can I make it a promise?
+    );
+  })
+};
+
 const roles = [];
 function findRole() {
-  connection.query("SELECT * FROM role", function(err, res) {
+  connection.query("SELECT * FROM roles", function(err, res) {
     if (err) throw err
     for (var i = 0; i < res.length; i++) {
       roles.push(res[i].title);
     }
-
   })
   return roles;
-}
+};
 
 const managers = [];
 function findManager() {
@@ -75,9 +82,28 @@ const beginPrompts = () => {
 }
 
 // VIEW ALL functions
-const viewDepartments = () => {};
-const viewRoles = () => {};
-const viewEmployees = () => {};
+const viewDepartments = () => {
+  db.query('SELECT * FROM departments', (err, res) => {
+    if (err) throw err;
+    cTable(res);
+  })
+  // does it work to call beginPrompts here?
+  beginPrompts();
+};
+const viewRoles = () => {
+  db.query('SELECT * FROM roles', (err, res) => {
+    if (err) throw err;
+    cTable(res);
+  })
+  beginPrompts();
+};
+const viewEmployees = () => {
+  db.query('SELECT * FROM employees', (err, res) => {
+    if (err) throw err;
+    cTable(res);
+  })
+  beginPrompts();
+};
 
 // ADD functions
 const addDepartment = () => {
@@ -89,11 +115,25 @@ const addDepartment = () => {
       }
       console.log(`Added ${data.name} to the departments table.`);
     })
-  })
+  }).then(beginPrompts());
 };
-const addRole = () => {};
+
+const addRole = () => {
+  inquirer.prompt(roleAdd)
+  .then((data) => {
+    db.query('INSERT INTO roles (name) VALUES (?)', [data.roleName, data.salary, data.department], (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      console.log(`Added ${data.roleName} to the roles table.`);
+    })
+  }).then(beginPrompts());
+};
+
 const addEmployee = () => {
-  inquirer.prompt(employeeName)
+  // running listRoles first to generate the roles so the employeeAdd prompt has those to use in the role question.
+  listRoles();
+  inquirer.prompt(employeeAdd)
   .then((data) => {
     // why the +1?
     const roleID = findRole().indexOf(data.role) + 1;
@@ -105,10 +145,8 @@ const addEmployee = () => {
       console.log(`Added ${data.firstName} ${data.lastName} to the employees table.`);
       // should I retrigger the beginPrompts function here?
     })
-  })
+  }).then(beginPrompts());
 };
 
 // UPDATE Employee Role
 const updateEmployee = () => {};
-
-  // use console table as some point to print the tables ?
