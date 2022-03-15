@@ -1,6 +1,8 @@
+const db = require('../connection.js');
+
 const initialQ = [
     {
-        name: 'whatDO',
+        name: 'choices',
         type: 'list',
         message: `What would you like to do?`,
         choices: ['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update an employee role', 'Exit'],
@@ -24,14 +26,28 @@ const employeeAdd = [
         type: 'list',
         message: `What is the employee's role?`,
         // connect roles from the db 
-        choices: [`${roles}`]
+        choices: async ()=> {
+            try{
+                const results = await db.promise().query('SELECT title as name, id as value FROM roles');
+            return results[0];
+            } catch (err) {
+                console.log(err);
+            }
+        }
     },
     {
         name: 'manager',
         type: 'list',
         message: `Who is the employee's manager?`,
         // connect employees with manager id from the db 
-        choices: ['None', `${managers}`]
+        choices: async ()=> {
+            try{
+                const results = await db.promise().query('SELECT CONCAT(first_name, " ", last_name) as name, id as value FROM employees');
+            return results[0];
+            } catch (err) {
+                console.log(err);
+            }
+        }
     },
 ];
 
@@ -51,7 +67,14 @@ const roleAdd = [
         type: 'list',
         message: `Which department does the role belong to?`,
         // connect departments from the db 
-        choices: [`${departments}`]
+        choices: async ()=> {
+            try{
+                const results = await db.promise().query('SELECT department_name as name, id as value FROM departments');
+            return results[0];
+            } catch (err) {
+                console.log(err);
+            }
+        }
     }
 ];
 

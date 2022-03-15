@@ -1,24 +1,11 @@
 // packages needed for this application
 const inquirer = require('inquirer');
-const mysql = require('mysql2');
-const dotenv = require('dotenv')
-const cTable = require('console.table');;
+require('console.table');
+const db = require('./connection');
 
 // importing questions for inquirer
 const { initialQ, employeeAdd, roleAdd, departmentAdd } = require('./utils/questions');
 
-dotenv.config();
-
-const db = mysql.createConnection(
-    {
-      host: process.env.MYSQL_HOST,
-      user: process.env.MYSQL_USERNAME,
-      password: process.env.MYSQL_PW,
-      port: process.env.PORT || 3001,
-      database: 'company_db'
-    },
-    console.log(`Connected to the company_db database.`)
-);
 
 db.connect((err) => {
   if(err) throw err;
@@ -48,7 +35,7 @@ function findRole() {
 
 const managers = [];
 function findManager() {
-  connection.query("SELECT first_name, last_name FROM employee WHERE manager_id IS NULL", function(err, res) {
+  connection.query('SELECT first_name, last_name FROM employee WHERE manager_id IS NULL', function(err, res) {
     if (err) throw err
     for (var i = 0; i < res.length; i++) {
       managers.push(res[i].first_name);
@@ -76,40 +63,39 @@ const beginPrompts = () => {
           } else if (data.choices === 'Update an employee role') {
               updateEmployee();
           } else {
-              db.end;
+              db.end();
           }
       })
-}
+};
 
 // VIEW ALL functions
 const viewDepartments = () => {
   db.query('SELECT * FROM departments', (err, res) => {
     if (err) throw err;
-    cTable(res);
+    console.table(res);
+    beginPrompts();
   })
-  // does it work to call beginPrompts here?
-  beginPrompts();
 };
 const viewRoles = () => {
   db.query('SELECT * FROM roles', (err, res) => {
     if (err) throw err;
-    cTable(res);
+    console.table(res);
+    beginPrompts();
   })
-  beginPrompts();
 };
 const viewEmployees = () => {
   db.query('SELECT * FROM employees', (err, res) => {
     if (err) throw err;
-    cTable(res);
+    console.table(res);
+    beginPrompts();
   })
-  beginPrompts();
 };
 
 // ADD functions
 const addDepartment = () => {
   inquirer.prompt(departmentAdd)
   .then((data) => {
-    db.query('INSERT INTO departments (name) VALUES (?)', data.dptName, (err, result) => {
+    db.query('INSERT INTO departments (department_name) VALUES (?)', data.dptName, (err, result) => {
       if (err) {
         console.log(err);
       }
