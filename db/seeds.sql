@@ -8,4 +8,4 @@ VALUES ('Software Engineer', 90000, 1), ('Lead Software Engineer', 140000, 1), (
 
 -- TO DO update with manager ID
 INSERT INTO employees (first_name, last_name, role_id, manager_id)
-VALUES ('John', 'Doe', 1, NULL), ('Jane', 'Smith', 2, NULL), ('Paul', 'Jones', 3, NULL), ('Mary', 'Brown', 4, NULL), ('Jack', 'Green', 5, NULL), ('Anna', 'Miller', 6, NULL), ('Pedro', 'Vasquez', 7, NULL), ('Areli', 'Garcia', 8, NULL), ('Allen', 'Moore', 9, NULL), ('Sigrid', 'Karlsen', 9, NULL);
+VALUES ('John', 'Doe', 1, NULL), ('Jane', 'Smith', 2, NULL), ('Paul', 'Jones', 3, NULL), ('Mary', 'Brown', 4, NULL), ('Jack', 'Green', 5, NULL), ('Anna', 'Miller', 6, NULL), ('Pedro', 'Vasquez', 7, NULL), ('Areli', 'Garcia', 8, NULL), ('Allen', 'Moore', 9, NULL), ('Sigrid', 'Karlsen', 10, NULL);

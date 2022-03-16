@@ -4,7 +4,7 @@ require('console.table');
 const db = require('./connection');
 
 // importing questions for inquirer
-const { initialQ, employeeAdd, roleAdd, departmentAdd } = require('./utils/questions');
+const { initialQ, employeeAdd, roleAdd, departmentAdd, employeeUpdate } = require('./utils/questions');
 
 
 db.connect((err) => {
@@ -13,37 +13,6 @@ db.connect((err) => {
   beginPrompts();
 }
 );
-
-const listRoles = () => {
-  db.query('SELECT * FROM roles', (err, res) => {
-    if (err) throw err;
-    res.json(//what should this output? can I make it a promise?
-    );
-  })
-};
-
-const roles = [];
-function findRole() {
-  connection.query("SELECT * FROM roles", function(err, res) {
-    if (err) throw err
-    for (var i = 0; i < res.length; i++) {
-      roles.push(res[i].title);
-    }
-  })
-  return roles;
-};
-
-const managers = [];
-function findManager() {
-  connection.query('SELECT first_name, last_name FROM employee WHERE manager_id IS NULL', function(err, res) {
-    if (err) throw err
-    for (var i = 0; i < res.length; i++) {
-      managers.push(res[i].first_name);
-    }
-
-  })
-  return managers;
-}
 
 const beginPrompts = () => {
   inquirer.prompt(initialQ)
@@ -95,44 +64,52 @@ const viewEmployees = () => {
 const addDepartment = () => {
   inquirer.prompt(departmentAdd)
   .then((data) => {
-    db.query('INSERT INTO departments (department_name) VALUES (?)', data.dptName, (err, result) => {
+    db.query('INSERT INTO departments (department_name) VALUES (?)', data.dptName, (err, res) => {
       if (err) {
         console.log(err);
       }
-      console.log(`Added ${data.name} to the departments table.`);
+      console.log(`Added ${data.dptName} to the departments table.`);
+      beginPrompts();
     })
-  }).then(beginPrompts());
+  });
 };
 
 const addRole = () => {
   inquirer.prompt(roleAdd)
   .then((data) => {
-    db.query('INSERT INTO roles (name) VALUES (?)', [data.roleName, data.salary, data.department], (err, result) => {
+    db.query('INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)', [data.roleName, data.salary, data.department], (err, res) => {
       if (err) {
         console.log(err);
       }
       console.log(`Added ${data.roleName} to the roles table.`);
+      beginPrompts();
     })
-  }).then(beginPrompts());
+  });
 };
 
 const addEmployee = () => {
-  // running listRoles first to generate the roles so the employeeAdd prompt has those to use in the role question.
-  listRoles();
   inquirer.prompt(employeeAdd)
   .then((data) => {
-    // why the +1?
-    const roleID = findRole().indexOf(data.role) + 1;
-    const managerID = findManager().indexOf(data.manager) + 1;
-    db.query('INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)', [data.firstName, data.lastName, roleID, managerID], (err, result) => {
+    db.query('INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)', [data.firstName, data.lastName, data.role, data.manager], (err, res) => {
       if (err) {
         console.log(err);
       }
       console.log(`Added ${data.firstName} ${data.lastName} to the employees table.`);
-      // should I retrigger the beginPrompts function here?
+      beginPrompts();
     })
-  }).then(beginPrompts());
+  });
 };
 
 // UPDATE Employee Role
-const updateEmployee = () => {};
+const updateEmployee = () => {
+  inquirer.prompt(employeeUpdate)
+  .then((data) => {
+    db.query('UPDATE employees SET role_id = ? WHERE id = ?', [data.role, data.employee], (err, res) => {
+      if (err) {
+        console.log(err);
+      }
+      console.log(`Added ${data.roleName} to the roles table.`);
+      beginPrompts();
+    })
+  });
+};

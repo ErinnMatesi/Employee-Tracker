@@ -86,4 +86,33 @@ const departmentAdd = [
     }
 ];
 
-module.exports = {initialQ, employeeAdd, roleAdd, departmentAdd};
+const employeeUpdate = [
+    {
+        name: 'employee',
+        type: 'list',
+        message: `Which employee's role would you like to update?`,
+        choices: async ()=> {
+            try{
+                const results = await db.promise().query('SELECT CONCAT(first_name, " ", last_name) as name, id as value FROM employees');
+            return results[0];
+            } catch (err) {
+                console.log(err);
+            }
+        }
+    },
+    {
+        name: 'role',
+        type: 'list',
+        message: `What is the employee's new role?`,
+        choices: async ()=> {
+            try{
+                const results = await db.promise().query('SELECT title as name, id as value FROM roles');
+            return results[0];
+            } catch (err) {
+                console.log(err);
+            }
+        }
+    }
+];
+
+module.exports = {initialQ, employeeAdd, roleAdd, departmentAdd, employeeUpdate};
