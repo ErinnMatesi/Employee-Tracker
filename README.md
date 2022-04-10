@@ -6,7 +6,7 @@ A command-line app that allows viewing and updating a company database that incl
 ## Table of Contents
 * [Installation](#installation)
 * [Usage](#usage)
-* [Testing](#testing)
+* [Technologies](#technologies)
 * [Questions](#questions)
 * [License](#license)
 
@@ -17,8 +17,14 @@ Clone the repo and install all dependencies.
 Run the server.js file in your terminal and follow all prompts. Use your arrow keys to tab through options.
 
 ![screenshot of webpage](./images/Screenshot.PNG)
+![screenshot of webpage](./images/viewRoles.PNG)
 
 See video for a *[walkthrough](https://drive.google.com/file/d/1comVZfJKzccEeCxpsdCz_AdScQ8VwngJ/view)*.
+
+## Technologies
+- MySQL
+- Javascript
+- Inquirer 
 
 ## License
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
